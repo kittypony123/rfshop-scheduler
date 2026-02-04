@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { AppContext } from '../lib/context'
+import { formatCurrency } from '../lib/utils'
 
 /** Orders Dashboard — Phase 2 will flesh this out fully */
 export function OrdersDashboard() {
@@ -55,7 +56,7 @@ export function OrdersDashboard() {
                     )}
                   </div>
                   <span className="text-sm font-medium text-slate-600">
-                    {q.Total != null ? `£${q.Total.toFixed(2)}` : ''}
+                    {q.Total != null ? formatCurrency(q.Total) : ''}
                   </span>
                 </div>
                 <div className="mt-1 text-sm text-slate-500">

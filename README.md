@@ -1,73 +1,59 @@
-# React + TypeScript + Vite
+# RFShop Scheduler
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React web app for managing RF cable assembly orders, build planning, parts tracking, and batch/repeat order scheduling. Reads from and writes to Airtable (SALES base).
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React 19 + TypeScript (strict) + Vite + Tailwind CSS v3
+- No backend — browser talks directly to Airtable REST API
+- Auth via Airtable Personal Access Token (stored in localStorage)
+- Deployed as static files on Vercel
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev        # Dev server at http://localhost:5173
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+You'll need an Airtable Personal Access Token with read/write access to the SALES base. Create one at [airtable.com/create/tokens](https://airtable.com/create/tokens).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Commands
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev        # Start dev server (HMR enabled)
+npm run build      # TypeScript check + production build
+npm run lint       # ESLint
+npm run preview    # Preview production build locally
 ```
+
+## Architecture
+
+```
+src/
+  components/     # React components (one per file)
+  lib/            # API client, context, constants, utilities
+  types/          # TypeScript type definitions for Airtable records
+  App.tsx         # Main app: auth, navigation, data loading
+```
+
+All data lives in Airtable. The app is stateless — it fetches data on load and writes changes back via the Airtable REST API.
+
+## Related Project
+
+[XeroAirtableSync](../XeroAirtableSync/) — Python scripts that sync Xero quotes into Airtable and parse assembly codes. This app reads the data those scripts create.
+
+## Build Phases
+
+| Phase | Feature | Status |
+|-------|---------|--------|
+| 1 | Project scaffold, auth, app shell, basic orders list | Done |
+| 2 | Full Orders Dashboard (filters, expand, inline edit) | Next |
+| 3 | Parts & Stock (aggregated parts, stock check-off) | Planned |
+| 4 | Batch Orders (delivery schedule, progress tracking) | Planned |
+| 5 | Build Planner (weekly schedule, capacity) | Planned |
+| 6 | Polish & Migration | Planned |
+
+## Windows Note
+
+If `npm install` installs Linux bindings instead of Windows ones, check `npm config get os` — it should return `null`, not `linux`. Fix with `npm config delete os`.
